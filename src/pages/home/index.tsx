@@ -1,3 +1,6 @@
+import { Social } from "../../components/social"
+import { FaGithub, FaLinkedin} from "react-icons/fa"
+
 export function Home() {
     return (
         <div className="flex flex-col w-full py-4 items-center justify-center">
@@ -18,7 +21,14 @@ export function Home() {
                         </p>
                     </a>
                 </section>
-                <footer className="flex justify-center gap-3 my-4 "></footer>
+                <footer className="flex justify-center gap-3 my-4 ">
+                    <Social url="https://www.linkedin.com/in/ewerssonsllv/">
+                        <FaLinkedin size={30} color="white"/>
+                    </Social>
+                    <Social url="https://github.com/EwerssonSllv">
+                        <FaGithub size={30} color="white"/>
+                    </Social>
+                </footer>
             </main>
         </div>
     )
