@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { Header } from "../../components/header";
 import { Input } from "../../components/input";
 import { FiTrash } from "react-icons/fi";
+import { db } from "../../services/firebaseConnection";
+import { addDoc, collection } from "firebase/firestore";
 
 
 export function Admin() {
@@ -10,10 +12,34 @@ export function Admin() {
     const [textColorInput, setTextColorInput] = useState("#121212")
     const [backgroundColorInput, setBackgroundColorInput] = useState("#f1f1f1")
 
+    async function handleRegister(e: FormEvent) {
+        e.preventDefault()
+
+        if (nameInput == "" || urlInput == "") {
+            alert("Fill in the fields.")
+            return;
+        }
+
+        await addDoc(collection(db, "links"), {
+            name: nameInput,
+            url: urlInput,
+            bg: backgroundColorInput,
+            color: textColorInput,
+            created: new Date()
+        }).then(() => {
+            setNameInput("")
+            setUrlInput("")
+            console.log("Registered successfully")
+        }).catch((error) => {
+            console.log("Error registering in the database." + error)
+        })
+
+    }
+
     return (
         <div className="flex items-center flex-col min-h-screen pb-7 px-2">
             <Header />
-            <form className="flex flex-col mt-8 w-full max-w-xl">
+            <form className="flex flex-col mt-8 w-full max-w-xl" onSubmit={handleRegister}>
                 <label className="text-white font-medium mt-2 mb-2 ">Name</label>
                 <Input placeholder="Link name"
                     value={nameInput}
@@ -42,6 +68,7 @@ export function Admin() {
                             onChange={(e) => setBackgroundColorInput(e.target.value)} />
                     </div>
                 </section>
+
                 {nameInput != "" &&
                     <div className="flex items-center justify-center flex-col mb-7 p-1 border-gray-100/25 border rounded-md">
                         <label className="text-white font-medium mt-2 mb-3">Preview</label>
@@ -62,20 +89,12 @@ export function Admin() {
             </h2>
 
             <article
-
-             className="flex justify-between items-center w-11/12 max-w-xl rounded py-3 px-2 mb-2"
-
-             style={{backgroundColor: "#2563EB", color: "#000"}}
-             
-             >
+                className="flex justify-between items-center w-11/12 max-w-xl rounded py-3 px-2 mb-2"
+                style={{ backgroundColor: "#2563EB", color: "#000" }}>
                 <p>Youtube</p>
                 <div>
-                    <button
-
-                    className="border border-dashed py-1 px-2 rounded border-white"
-                    
-                    >
-                        <FiTrash size={16} color="white"/>
+                    <button className="border border-dashed py-1 px-2 rounded border-white">
+                        <FiTrash size={16} color="white" />
                     </button>
                 </div>
             </article>
