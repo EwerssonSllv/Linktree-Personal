@@ -1,16 +1,50 @@
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, useEffect } from "react";
 import { Header } from "../../components/header";
 import { Input } from "../../components/input";
 import { FiTrash } from "react-icons/fi";
 import { db } from "../../services/firebaseConnection";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, onSnapshot, orderBy, query } from "firebase/firestore";
 
+interface LinkProps {
+    id: string,
+    name: string,
+    url: string,
+    bg: string,
+    color: string
+}
 
 export function Admin() {
     const [nameInput, setNameInput] = useState("")
     const [urlInput, setUrlInput] = useState("")
     const [textColorInput, setTextColorInput] = useState("#121212")
     const [backgroundColorInput, setBackgroundColorInput] = useState("#f1f1f1")
+
+    const [links, setLinks] = useState<LinkProps[]>([])
+
+    useEffect(() => {
+        const linksRef = collection(db, "links")
+        const queryRef = query(linksRef, orderBy("created", "asc"))
+
+        const unSub = onSnapshot(queryRef, (snapshot) => {
+            let lista = [] as LinkProps[]
+
+            snapshot.forEach((doc) => {
+                lista.push({
+                    id: doc.id,
+                    name: doc.data().name,
+                    url: doc.data().url,
+                    bg: doc.data().bg,
+                    color: doc.data().color
+                })
+            })
+            setLinks (lista)
+        })
+
+        return () => {
+            unSub()
+        }
+
+    }, [])
 
     async function handleRegister(e: FormEvent) {
         e.preventDefault()
@@ -33,7 +67,6 @@ export function Admin() {
         }).catch((error) => {
             console.log("Error registering in the database." + error)
         })
-
     }
 
     return (
