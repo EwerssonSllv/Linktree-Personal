@@ -3,7 +3,7 @@ import { Header } from "../../components/header";
 import { Input } from "../../components/input";
 import { FiTrash } from "react-icons/fi";
 import { db } from "../../services/firebaseConnection";
-import { addDoc, collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, onSnapshot, orderBy, query, doc } from "firebase/firestore";
 
 interface LinkProps {
     id: string,
@@ -37,7 +37,7 @@ export function Admin() {
                     color: doc.data().color
                 })
             })
-            setLinks (lista)
+            setLinks(lista)
         })
 
         return () => {
@@ -67,6 +67,11 @@ export function Admin() {
         }).catch((error) => {
             console.log("Error registering in the database." + error)
         })
+    }
+
+    async function handleDeleteLink(id: string){
+        const docRef = doc(db, "links", id)
+        await deleteDoc(docRef)
     }
 
     return (
@@ -121,16 +126,24 @@ export function Admin() {
                 My Links
             </h2>
 
-            <article
-                className="flex justify-between items-center w-11/12 max-w-xl rounded py-3 px-2 mb-2"
-                style={{ backgroundColor: "#2563EB", color: "#000" }}>
-                <p>Youtube</p>
-                <div>
-                    <button className="border border-dashed py-1 px-2 rounded border-white">
-                        <FiTrash size={16} color="white" />
-                    </button>
-                </div>
-            </article>
+            {links.map((link) => (
+
+                <article
+                    className="flex justify-between items-center w-11/12 max-w-xl rounded py-3 px-2 mb-2"
+                    style={{ backgroundColor: link.bg, color: link.color }}
+                    key={link.id}
+                    >
+                    <p>{link.name}</p>
+                    <div>
+                        <button 
+                        className="border border-dashed py-1 px-2 rounded border-white"
+                        onClick={() => handleDeleteLink(link.id)}>
+                            <FiTrash size={16} color={link.color} />
+                        </button>
+                    </div>
+                </article>
+
+            ))}
         </div>
     )
 }
