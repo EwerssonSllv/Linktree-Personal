@@ -1,29 +1,43 @@
 import { Header } from "../../components/header";
 import { Input } from "../../components/input";
 import { db } from "../../services/firebaseConnection";
-import { setDoc, addDoc, getDoc, doc } from "firebase/firestore";
+import { setDoc, getDoc, doc } from "firebase/firestore";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 
 export function Networks() {
-    const [instagram, setInstagram] = useState("")
+    const [linkedin, setLinkedin] = useState("")
     const [github, setGithub] = useState("")
     const [portfolio, setPortfolio] = useState("")
 
-    function handleRegister(e: FormEvent){
+    function handleRegister(e: FormEvent) {
         e.preventDefault()
 
-        setDoc(doc(db, "social", "link"),{
-            instagram: instagram,
+        setDoc(doc(db, "social", "link"), {
+            linkedin: linkedin,
             github: github,
             portfolio: portfolio
-        }).then(()=>{
+        }).then(() => {
             alert("Sucess")
         }).catch((e) => {
             alert("Error" + e)
         })
-
     }
+
+    useEffect(() => {
+        function loadLinks() {
+            const docRef = doc(db, "social", "link")
+            getDoc(docRef)
+                .then((snapshot) => {
+                    if (snapshot.data() != undefined) {
+                        setPortfolio(snapshot.data()?.portfolio)
+                        setGithub(snapshot.data()?.github)
+                        setLinkedin(snapshot.data()?.linkedin)
+                    }
+                })
+        }
+        loadLinks()
+    }, [])
 
     return (
         <div className="flex items-center flex-col min-h-screen pb-7 px-2">
@@ -44,23 +58,19 @@ export function Networks() {
                     value={github}
                     onChange={(e) => setGithub(e.target.value)}
                 />
-                     <label className="text-white font-medium mb-2 mt-2 ">Instagram</label>
+                <label className="text-white font-medium mb-2 mt-2 ">LinkedIn</label>
                 <Input
-                    placeholder="Instagram URL"
+                    placeholder="Linkedin URL"
                     type="url"
-                    value={instagram}
-                    onChange={(e) => setInstagram(e.target.value)}
+                    value={linkedin}
+                    onChange={(e) => setLinkedin(e.target.value)}
                 />
 
                 <button
-                type="submit"
-                className="text-white bg-blue-600 h-9 rounded-md items-center justify-center flex mb-7 mt-3">
+                    type="submit"
+                    className="text-white bg-blue-600 h-9 rounded-md items-center justify-center flex mb-7 mt-3">
                     Save
-
                 </button>
-
-
-
 
             </form>
         </div>

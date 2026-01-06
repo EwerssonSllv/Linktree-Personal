@@ -1,5 +1,6 @@
 import { Social } from "../../components/social"
 import { FaGithub, FaLinkedin} from "react-icons/fa"
+import { BsFileEarmarkText } from "react-icons/bs";
 
 export function Home() {
     return (
@@ -22,11 +23,14 @@ export function Home() {
                     </a>
                 </section>
                 <footer className="flex justify-center gap-3 my-4 ">
+                    <Social url="https://ewerssonsllv.netlify.app/">
+                        <BsFileEarmarkText size={30} color="white" />
+                    </Social>
+                      <Social url="https://github.com/EwerssonSllv">
+                        <FaGithub size={30} color="white"/>
+                    </Social>
                     <Social url="https://www.linkedin.com/in/ewerssonsllv/">
                         <FaLinkedin size={30} color="white"/>
-                    </Social>
-                    <Social url="https://github.com/EwerssonSllv">
-                        <FaGithub size={30} color="white"/>
                     </Social>
                 </footer>
             </main>
